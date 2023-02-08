@@ -1,0 +1,114 @@
+<?xml version = "1.0"?> 
+<!-- Guide --> 
+<entities> 
+	<company number = "l"> 
+		<title>КомпаниWeb</title> 
+		<director>Царева Марина Даниловна</director> 
+		<phone_director>+79131804697</phone_director> 
+		<contact_person>Мечников Ираклий Альбертович</contact_person> 
+		<phone_contact_person>+79978706442</phone_contact_person> 
+		<OGRN>7568445707845</OGRN>
+		<adress>г. Новомосковск, ул. Внуковское ш, дом 95, квартира 949</adress> 
+		<branch>Организация кинопроизводства</branch> 
+		<description>IrakliyMechnikov605</description> 
+	</company>
+	<company number = "2"> 
+		<title>КомпаниNetwork</title> 
+		<director>Сафронов Самсон Федорович</director> 
+		<phone_director>+79230791519</phone_director> 
+		<contact_person>Покровский Амвросий Романович</contact_person> 
+		<phone_contact_person>+79404888354</phone_contact_person> 
+		<OGRN>7973222183698</OGRN>
+		<adress>г. Мегион, ул. Хабаровский пер, дом 107, квартира 343</adress>
+		<branch>Управление персоналом организации</branch>  
+		<description>AmvrosiyPokrovskiy334</description> 
+	</company>
+	<company number = "3"> 
+		<title>GreenКомпани</title> 
+		<director>Новицкий Олег Григорьевич</director> 
+		<phone_director>+79821249118</phone_director> 
+		<contact_person>Муравьёва Людмила Андреевна</contact_person> 
+		<phone_contact_person>+79969358762</phone_contact_person> 
+		<OGRN>6727825023874</OGRN>
+		<adress>г. Конышевка, ул. Рощинский 4-й проезд, дом 168, квартира 52</adress> 
+		<branch>Переработка нефти и газа</branch> 
+		<description>LyudmilaMuraveva39</description> 
+	</company>
+	<company number = "4"> 
+		<title>MobileКомпани</title> 
+		<director>Оленников Герасим Игоревич</director> 
+		<phone_director>+79441953704</phone_director> 
+		<contact_person>Соловьев Болеслав Викторович</contact_person> 
+		<phone_contact_person>+79010564005</phone_contact_person> 
+		<OGRN>5464954373133</OGRN>
+		<adress>г. Вешкайма, ул. Гарина-Михайловского пл, дом 192, квартира 79</adress> 
+		<branch>Выполнение бетонных работ</branch> 
+		<description>BoleslavSolovev923</description> 
+	</company>
+	<company number = "5"> 
+		<title>YourКомпани</title> 
+		<director>Лебедев Харлампий Михайлович</director> 
+		<phone_director>+79257078268</phone_director> 
+		<contact_person>Константинов Федот Тимурович</contact_person> 
+		<phone_contact_person>+79701616182</phone_contact_person> 
+		<OGRN>9722549239969</OGRN>
+		<adress>г. Красноярск, ул. 27-я Линия линия, дом 81, квартира 715</adress> 
+		<branch>Обработка шкур</branch> 
+		<description>FedotKonstantinov46</description> 
+	</company>
+	<company number = "6"> 
+		<title>КомпаниTube</title> 
+		<director>Дементьев Евстигней Данилович</director> 
+		<phone_director>+79977360035</phone_director> 
+		<contact_person>Лаврентьев Поликарп Алексеевич</contact_person> 
+		<phone_contact_person>+79456365656</phone_contact_person> 
+		<OGRN>4714805768910</OGRN>
+		<adress>г. Волоколамск, ул. Амбаторный 2-й проезд, дом 30, квартира 314</adress> 
+		<branch>Организация кинопроизводства</branch>
+		<description>PolikarpLavrentev394</description> 
+	</company>
+	<company number = "7"> 
+		<title>КомпаниService</title> 
+		<director>+49 631322187</director> 
+		<phone_director>piggy@mega.de</phone_director> 
+		<contact_person>Piggy</contact_person> 
+		<phone_contact_person>+49 631322187</phone_contact_person> 
+		<OGRN>2105555655847</OGRN>
+		<adress>г. Волоколамск, ул. Амбаторный 2-й проезд, дом 32, квартира 314</adress>
+		<branch>Финансовое консультирование</branch>
+		<description>+49 631322187</description> 
+	</company>
+	<company number = "8"> 
+		<title>BuyКомпани</title> 
+		<director>Гронский Зиновий Валентинович</director> 
+		<phone_director>+79244447202</phone_director> 
+		<contact_person>Пешнина Екатерина Игоревна</contact_person> 
+		<phone_contact_person>+79046585617</phone_contact_person> 
+		<OGRN>5336781200773</OGRN>
+		<adress>г. Архангельск, ул. Олений проезд, дом 137, квартира 861</adress> 
+		<branch>Переработка нефти и газа</branch> 
+		<description>EkaterinaPeshnina739</description> 
+	</company>
+	<company number = "9"> 
+		<title>ReКомпани</title> 
+		<director>Снежная Олимпиада Романовна</director> 
+		<phone_director>+79339691565</phone_director> 
+		<contact_person>Дубровская Борислава Игоревна</contact_person> 
+		<phone_contact_person>+79523540740</phone_contact_person> 
+		<OGRN>2401159452074</OGRN>
+		<adress>г. Перемышль, ул. Бийский 1-й пер, дом 187, квартира 521</adress> 
+		<branch>Финансовое консультирование</branch> 
+		<description>BorislavaDubrovskaya456</description> 
+	</company>
+	<company number = "10"> 
+		<title>КомпаниSpace</title> 
+		<director>Виноградов Ефрем Станиславович</director> 
+		<phone_director>+79704626810</phone_director> 
+		<contact_person>Сталина Эмма Васильевна</contact_person> 
+		<phone_contact_person>+79619705749</phone_contact_person> 
+		<OGRN>5315716307786</OGRN>
+		<adress>г. Старая Майна, ул. Лопатина, дом 196, квартира 350</adress> 
+		<branch>Управление персоналом организации</branch> 
+		<description>EmmaStalina746</description> 
+	</company>
+</entities> 
