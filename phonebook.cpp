@@ -36,20 +36,37 @@ PhoneBook::PhoneBook(QWidget *parent)
 
     //pgbMedium
     QHBoxLayout  *phbxMedium = new QHBoxLayout();
-    QStringList lst;
-    ptable= new QTableView();
+
+    ptable = new QTableView();
+    ptable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //ptable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+
+
+    ptable1= new QTableWidget();
+    ptable1->setRowCount(3);
+    ptable1->setColumnCount(9);
+
+    QStringList columns = { "Название", "ФИО директора", "Телефон директора", "Контактное лицо","Телефон контанктного лица","ОГРН","Адрес","Отрасль","Описание" };
+    ptable1->setHorizontalHeaderLabels(columns);
+
+    ptable1->setEditTriggers(QAbstractItemView::NoEditTriggers); // Запрет редактирование ячеек
+
+    for(int i=0;i<ptable1->columnCount();i++)
+        ptable1->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch); //Выравнивание по всей ширине виджета
 
 
     ppbIndividuals = new QPushButton (tr("Физические лица"));
     ppbLegalEntities = new QPushButton (tr("Юридические лица"));
 
     phbxMedium->addWidget(ptable);
+    phbxMedium->addWidget(ptable1);
     phbxMedium->addWidget(ppbIndividuals);
     phbxMedium->addWidget(ppbLegalEntities);
 
     pgbMedium->setLayout(phbxMedium);
 
     ptable->hide();
+    ptable1->hide();
 
     //pgbLower
     QHBoxLayout  *phbxlLower = new QHBoxLayout();
@@ -76,10 +93,18 @@ PhoneBook::PhoneBook(QWidget *parent)
     prbname = new QRadioButton (tr("По имени"));
     prbsurname = new QRadioButton (tr("По фамилии"));
     prbnumber = new QRadioButton (tr("По номеру телефона"));
+    prbtitle = new QRadioButton (tr("По названию"));
+    prbFIO = new QRadioButton (tr("По ФИО директора"));
+    prbOGRN = new QRadioButton (tr("По ОГРН"));
+    prbbranch = new QRadioButton (tr("По отрасли"));
 
     pvbxlSearchRadioButton->addWidget(prbname);
     pvbxlSearchRadioButton->addWidget(prbsurname);
     pvbxlSearchRadioButton->addWidget(prbnumber);
+    pvbxlSearchRadioButton->addWidget(prbtitle);
+    pvbxlSearchRadioButton->addWidget(prbFIO);
+    pvbxlSearchRadioButton->addWidget(prbOGRN);
+    pvbxlSearchRadioButton->addWidget(prbbranch);
 
     QLabel *plinput= new QLabel(tr("Введите критерий поиска"));
     plename = new QLineEdit();
@@ -135,11 +160,15 @@ PhoneBook::PhoneBook(QWidget *parent)
     db=QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("C:/Users/d.andronychev/study/Qt/PhoneBookV2/db/PhoneRecordIndividuals.db");
     if(!db.open())
+    {
         Close_msg("Ошибка при открытии базы данных");
+        qDebug() << db.lastError().text();
+    }
     modeldb= new QSqlTableModel(this,db);
     modeldb->setTable("Records");
     modeldb->select();
-    ptable->setModel(modeldb);
+
+//    modeldb->setEditStrategy(QSqlTableModel::OnFieldChange);
 
 
     QFile file("C:/Users/d.andronychev/study/Qt/Guide/Entities.xml") ;
@@ -331,17 +360,23 @@ void PhoneBook::SearcheRecordMapIndividuals()
 
 void PhoneBook::AddRecordEntitie()
 {
-
+    OpenLegalEntities();
+    formEntities = new FormEntities ();
+    formEntities->show();
 }
 
 void PhoneBook::EditRecordEntitie()
 {
-
+    OpenLegalEntities();
+    formEntities = new FormEntities ();
+    formEntities->show();
 }
 
 void PhoneBook::DeleteRecordEntitie()
 {
-
+    OpenLegalEntities();
+    formEntities = new FormEntities ();
+    formEntities->show();
 }
 
 void PhoneBook::SearchRecordTitle()
@@ -384,6 +419,7 @@ void PhoneBook::GoMain()
     pgbLower->hide();
     plDirIndividual->hide();
     ptable->hide();
+    ptable1->hide();
     plDirEntitie->hide();
 
     plState->show();
@@ -406,6 +442,9 @@ void PhoneBook::EditRecord()
         EditRecordIndividuals();
     else
         EditRecordEntitie();
+    //QModelIndex idIndex = ptable->model()->selectedIndexes()->first();
+    //qDebug() << " value "<< ptable->model()->data(ptable->model()->index(index.row(),0)).toInt();
+
 }
 
 void PhoneBook::DeleteRecord()
@@ -453,7 +492,7 @@ void PhoneBook::Show()
 
 void PhoneBook::Map()
 {
-    formMapIndividuals = new FormMapIndividuals();
+    formMapIndividuals = new FormMapIndividuals(db);
     formMapIndividuals->show();
 }
 
@@ -466,15 +505,124 @@ void PhoneBook::OpenIndividuals()
     ppbIndividuals->hide();
     ppbLegalEntities->hide();
     ptable->show();
+    ptable1->hide();
+    prbname->show();
+    prbsurname->show();
+    prbnumber->show();
+    prbtitle->hide();
+    prbFIO->hide();
+    prbOGRN->hide();
+    prbbranch->hide();
+    ptable->setModel(modeldb);
 }
 
 void PhoneBook::OpenLegalEntities()
 {
     pgbLower->show();
+    ptable1->show();
+    ptable->hide();
     plDirIndividual->hide();
     plState->hide();
     plDirEntitie->show();
     ppbIndividuals->hide();
     ppbLegalEntities->hide();
-    ptable->show();
+    prbname->hide();
+    prbsurname->hide();
+    prbnumber->hide();
+    prbtitle->show();
+    prbFIO->show();
+    prbOGRN->show();
+    prbbranch->show();
+
+
+    QString OGRN="1221313";
+    Company company;
+    company.title="Название 1";
+    company.director="Директор 1";
+    company.phone_director="Телефон директора 1";
+    company.contact_person="Контактный человек 1";
+    company.phone_contact_person="Телефон контакного 1";
+    company.adress="Адрес 1";
+    company.branch="Отсрасль 1";
+    company.description="Описание 1";
+
+    QString OGRN1="1221314";
+    Company company1;
+    company1.title="Название 2";
+    company1.director="Директор 2";
+    company1.phone_director="Телефон директора 2";
+    company1.contact_person="Контактный человек 2";
+    company1.phone_contact_person="Телефон контакного 2";
+    company1.adress="Адрес 2";
+    company1.branch="Отсрасль 2";
+    company1.description="Описание 2";
+
+    QString OGRN3="1221315";
+    Company company3;
+    company3.title="Название 3";
+    company3.director="Директор 3";
+    company3.phone_director="Телефон директора 3";
+    company3.contact_person="Контактный человек 3";
+    company3.phone_contact_person="Телефон контакного 3";
+    company3.adress="Адрес 3";
+    company3.branch="Отсрасль 3";
+    company3.description="Описание 3";
+
+    mapCompany.insert(OGRN,company);
+    //qDebug()<<mapCompany.size();
+    mapCompany.insert(OGRN1,company1);//нужно создать модель
+    //qDebug()<<mapCompany.size();
+    mapCompany.insert(OGRN3,company3);//нужно создать модель
+    //qDebug()<<mapCompany.size();
+
+//    QMapIterator<QString, Company> j(mapCompany);
+//    while (j.hasNext()) {
+//     j.next();
+//           qDebug()<<j.key();
+//           qDebug()<<j.value().title;
+//           qDebug()<<j.value().director;
+//           qDebug()<<j.value().phone_director;
+//           qDebug()<<j.value().contact_person;
+//           qDebug()<<j.value().phone_contact_person;
+//           qDebug()<<j.value().adress;
+//           qDebug()<<j.value().branch;
+//           qDebug()<<j.value().description;
+//        }
+
+    //QStandardItemModel* model = new QStandardItemModel();
+
+    ptable1->clearContents();
+    ptable1->setRowCount(0);
+
+    QMapIterator<QString, Company> i (mapCompany);
+    while (i.hasNext())
+    {
+        i.next();
+        ptable1->setRowCount(ptable1->rowCount() + 1);
+
+        QTableWidgetItem *newItem;
+        ptable1->setItem(ptable1->rowCount() - 1, 0, new QTableWidgetItem(i.value().title));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 1, new QTableWidgetItem(i.value().director));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 2, new QTableWidgetItem(i.value().phone_director));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 3, new QTableWidgetItem(i.value().contact_person));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 4, new QTableWidgetItem(i.value().phone_contact_person));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 5, new QTableWidgetItem(i.key()));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 6, new QTableWidgetItem(i.value().adress));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 7, new QTableWidgetItem(i.value().branch));
+
+        ptable1->setItem(ptable1->rowCount() - 1, 8, new QTableWidgetItem(i.value().description));
+
+        //ptable1->show();
+
+    }
+        // устанавливаем модели данных в таблицы
+        //ptable1->setModel(model);
+
 }

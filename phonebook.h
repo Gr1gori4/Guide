@@ -21,12 +21,30 @@
 #include <QSqlQuery>
 #include <QTableView>
 #include <QtXml>
+#include <QMap>
+#include <QStandardItemModel>
+#include <QModelIndex>
+#include <QHeaderView>
 #include "formindividuals.h"
 #include "formmapindividuals.h"
+#include "formEntities.h"
 
 class PhoneBook : public QWidget
 {
     Q_OBJECT
+
+    struct Company
+        {
+            QString title;
+            QString director;
+            QString phone_director;
+            QString contact_person;
+            QString phone_contact_person;
+            QString adress;
+            QString branch;
+            QString description;
+        };
+
 
 public:
     PhoneBook(QWidget *parent = 0);
@@ -39,10 +57,15 @@ private:
     QPushButton *ppbIndividuals;
     QPushButton *ppbLegalEntities;
     QTableView *ptable;
+    QTableWidget   *ptable1;
     QLineEdit* plename;
     QRadioButton *prbname;
     QRadioButton *prbsurname;
     QRadioButton *prbnumber;
+    QRadioButton *prbtitle;
+    QRadioButton *prbFIO;
+    QRadioButton *prbOGRN;
+    QRadioButton *prbbranch;
 
     QSqlDatabase db;
     QSqlTableModel *modeldb;
@@ -53,6 +76,22 @@ private:
 
     FormIndividuals *formAddIndividuals;
     FormMapIndividuals *formMapIndividuals;
+
+    FormEntities *formEntities;
+
+//    struct Company
+//        {
+//            QString title;
+//            QString director;
+//            QString phone_director;
+//            QString contact_person;
+//            QString phone_contact_person;
+//            QString adress;
+//            QString branch;
+//            QString description;
+//        };
+
+    QMap<QString, Company> mapCompany;
 
 
 private slots:

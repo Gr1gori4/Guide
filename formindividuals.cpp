@@ -2,7 +2,13 @@
 #include "phonebook.h"
 
 FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+
+    phone_validator(QRegExp("^\\+7\\(\\d{3}\\)\\d{3}\\-\\d{2}\\-\\d{2}$")),
+//    text_validator(QRegExp("^[A-Z]{3-20}$")),
+    text_validator(QRegExp("^[А-Я][а-я]{1,15}$")),
+    mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,}\\.[a-zA-Z]{1,3}$"))
+
 {
     plsurname = new QLabel(tr("Фамилия:"));
     plname = new QLabel (tr("Имя:"));
@@ -23,10 +29,16 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
     plesurname->setPlaceholderText(tr("Введите фамилию"));
     plename->setPlaceholderText(tr("Введите имя"));
     plepatronymic->setPlaceholderText(tr("Введите отчество"));
-    plenumber->setPlaceholderText(tr("Введите номер телефона"));
+    plenumber->setPlaceholderText(tr("+7(___)___-__-__"));
     pleadress->setPlaceholderText(tr("Введите адрес почты"));
     plestatus->setPlaceholderText(tr("Введите статус"));
     pledescription->setPlaceholderText(tr("Введите описание"));
+
+    plesurname->setValidator(&text_validator);
+    plename->setValidator(&text_validator);
+    plepatronymic->setValidator(&text_validator);
+    plenumber->setValidator(&phone_validator);
+    pleadress->setValidator(&mail_validator);
 
     ppbinsert = new QPushButton (tr("Добавить"));
     ppbedit = new QPushButton (tr("Редактировать"));
@@ -171,15 +183,16 @@ void FormIndividuals::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)// н�
 {
     QSqlQuery query(db);
 
-    //query.prepare("UPDATE Records SET Фамилия = :surname, Имя = :name, Отчество = :patronymic, Номер телефона = :number, Почта = :adress, Статус = :status, Описание = :description WHERE Номер телефона = :number");
-//    query.prepare("UPDATE Records SET Фамилия = :surname, Имя = :name, Отчество = :patronymic, Номер телефона = :number, "
+//    query.prepare("UPDATE Records SET Фамилия = :surname, Имя = :name, Отчество = :patronymic, Номер телефона = :number, Почта = :adress, Статус = :status, Описание = :description WHERE Номер телефона = :number");
+    query.prepare("UPDATE Records SET 'Фамилия' = :surname, 'Имя' = :name, 'Отчество' = :patronymic, 'Номер телефона' = :number, 'Почта' = :adress, 'Статус' = :status, 'Описание' = :description WHERE Номер телефона = '88888888'");
+    //    query.prepare("UPDATE Records SET Фамилия = :surname, Имя = :name, Отчество = :patronymic, Номер телефона = :number, "
 //                  "Почта = :adress, Статус = :status, Описание = :description * FROM WHERE Фамилия = :surname AND Имя = :name");
 //    query.prepare("INSERT INTO Records('Фамилия', 'Имя', 'Отчество', 'Номер телефона', 'Почта', 'Статус', 'Описание') VALUES (:surname, :name, :patronymic, :number,:adress,:status, :description) ON CONFLICT(Имя) DO UPDATE SET Фамилия = :surname, Отчество = :patronymic, Номер телефона = :number, "
 //                  "Почта = :adress, Статус = :status, Описание = :description");
 //    query.prepare("INSERT INTO Records ('Фамилия', 'Имя', 'Отчество', 'Номер телефона', 'Почта', 'Статус', 'Описание') "
 //                  "VALUES (:surname, :name, :patronymic, :number,:adress,:status, :description)"
 //                  "ON CONFLICT(Имя) DO UPDATE SET Фамилия=:'surname'");
-//    query.bindValue(":surname",plesurname->text());
+    query.bindValue(":surname",plesurname->text());
     query.bindValue(":name",plename->text());
     query.bindValue(":patronymic",plepatronymic->text());
     query.bindValue(":number",plenumber->text());
@@ -243,7 +256,8 @@ void FormIndividuals::SearchRecord(QSqlDatabase db, QSqlTableModel *modeldb)
         modeldb->setFilter("Имя = '"+plename->text()+"'");
     else if(!plesurname->text().isEmpty())
         modeldb->setFilter("Фамилия = '"+plesurname->text()+"'");
-    else
+    else if(!plenumber->text().isEmpty())
+        //qDebug()<<plenumber->text();
         modeldb->setFilter("Номер телефона = '"+plenumber->text()+"'");  // не работает
     modeldb->select();
     Close_msg("Поиск завершен");

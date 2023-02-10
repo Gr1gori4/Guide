@@ -13,6 +13,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QXmlStreamReader>
+#include <QValidator>
 
 namespace Ui {
 class FormIndividuals;
@@ -47,6 +48,10 @@ private:
     QPushButton *ppbedit;
     QPushButton *ppbdelete;
     QPushButton *ppbsearch;
+
+    QRegExpValidator phone_validator;
+    QRegExpValidator text_validator;
+    QRegExpValidator mail_validator;
 
     void Close_msg(QString);
     void Search_menu();
