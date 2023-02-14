@@ -1,5 +1,5 @@
-#ifndef FORMINDIVIDUALS_H
-#define FORMINDIVIDUALS_H
+#ifndef FORMINDIVIDUALSEDIT_H
+#define FORMINDIVIDUALSEDIT_H
 
 #include <QWidget>
 #include <QLineEdit>
@@ -16,17 +16,14 @@
 #include <QXmlStreamReader>
 #include <QValidator>
 
-namespace Ui {
-class FormIndividuals;
-}
 
-class FormIndividuals : public QWidget
+class FormindividualsEdit : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FormIndividuals(int, QSqlDatabase, QSqlTableModel *, QWidget *parent = nullptr);
-    ~FormIndividuals();
+    explicit FormindividualsEdit(int, QSqlDatabase, QSqlTableModel *,QModelIndexList, QWidget *parent = nullptr);
+    ~FormindividualsEdit();
 
 private:
     QLineEdit *plename;
@@ -45,26 +42,20 @@ private:
     QLabel* plstatus;
     QLabel* pldescription;
 
-    QPushButton *ppbinsert;
     QPushButton *ppbedit;
     QPushButton *ppbdelete;
-    QPushButton *ppbsearch;
 
     QRegExpValidator phone_validator;
     QRegExpValidator text_validator;
     QRegExpValidator mail_validator;
 
     void Close_msg(QString);
-    void Search_menu();
     void PrintInLineEdit(int,QSqlTableModel *);
 
 
 private slots:
-    void AddRecord(QSqlDatabase,QSqlTableModel *);
     void EditRecord(QSqlDatabase,QSqlTableModel *);
     void DeleteRecord(QSqlDatabase,QSqlTableModel *);
-    void SearchRecord(QSqlTableModel *);
-
 };
 
-#endif // FORMINDIVIDUALS_H
+#endif // FORMINDIVIDUALSEDIT_H

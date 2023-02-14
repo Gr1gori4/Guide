@@ -27,6 +27,7 @@
 #include <QModelIndex>
 #include <QHeaderView>
 #include "formindividuals.h"
+#include "formindividualsedit.h"
 #include "formmapindividuals.h"
 #include "formEntities.h"
 
@@ -79,6 +80,7 @@ private:
 
     FormIndividuals *formAddIndividuals;
     FormMapIndividuals *formMapIndividuals;
+    FormindividualsEdit *formindividualsEdit;
 
     FormEntities *formEntities;
 

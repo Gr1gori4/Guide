@@ -210,7 +210,7 @@ PhoneBook::~PhoneBook()
 
 }
 
-void PhoneBook::CreateMenu(/*QWidget *parent*/)
+void PhoneBook::CreateMenu()
 {
     auto *menuBar= new QMenuBar(this);
     auto * pmDirIndividual = menuBar->addMenu(tr("Справочник физических лиц"));
@@ -298,134 +298,61 @@ void PhoneBook::CreateMenu(/*QWidget *parent*/)
     connect(paDisplayRecordListEntitie,SIGNAL(triggered()),SLOT(DisplayRecordListEntitie()));
     connect(paSearcheRecordMapEntitie,SIGNAL(triggered()),SLOT(SearcheRecordMapEntitie()));
 }
-
-void PhoneBook::Close_msg(QString str)
-{
-    QMessageBox msg;
-    msg.setText(str);
-    msg.exec();
-}
+    //====================================================//
 
 
-void PhoneBook::TraverseNode(const QDomNode& node)
-{
-    QString *OGRN= new QString();
-    Company *company= new Company();
-    QDomNode domNode = node.firstChild();
-    while ( ! domNode. isNull () ) {
-        if(domNode.isElement()) {
-            QDomElement domElement = domNode.toElement();
-            if (!domElement.isNull()) {
-                QString str=domElement. tagName ( );
-                if( domElement. tagName ( ) == "company" ) {
-                       OGRN = new QString();
-                       company = new Company();
-                }
-                else if(domElement.tagName() == "title")
-                    company->title=domElement.text();
-                else if(domElement.tagName() == "director")
-                    company->director=domElement.text();
-                else if(domElement.tagName() == "phone_director")
-                    company->phone_director=domElement.text();
-                else if(domElement.tagName() == "contact_person")
-                    company->contact_person=domElement.text();
-                else if(domElement.tagName() == "phone_contact_person")
-                    company->phone_contact_person=domElement.text();
-                else if(domElement.tagName() == "OGRN")
-                    *OGRN=domElement.text();
-                else if(domElement.tagName() == "adress")
-                    company->adress=domElement.text();
-                else if(domElement.tagName() == "branch")
-                    company->branch=domElement.text();
-                else if(domElement.tagName() == "description"){
-                    company->description=domElement.text();
-                    mapCompany.insert(*OGRN,*company);
-                }
-            }
-        }
-        TraverseNode(domNode);
-        domNode=domNode.nextSibling();
-    }
-}
-
-void PhoneBook::Print_Table()
-{
-    ptwXML->clearContents();
-    ptwXML->setRowCount(0);
-    QMapIterator<QString, Company> i (mapCompany);
-    while (i.hasNext())
-    {
-        i.next();
-        ptwXML->setRowCount(ptwXML->rowCount() + 1);
-
-        //QTableWidgetItem *newItem;
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 0, new QTableWidgetItem(i.value().title));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 1, new QTableWidgetItem(i.value().director));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 2, new QTableWidgetItem(i.value().phone_director));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 3, new QTableWidgetItem(i.value().contact_person));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 4, new QTableWidgetItem(i.value().phone_contact_person));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 5, new QTableWidgetItem(i.key()));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 6, new QTableWidgetItem(i.value().adress));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 7, new QTableWidgetItem(i.value().branch));
-
-        ptwXML->setItem(ptwXML->rowCount() - 1, 8, new QTableWidgetItem(i.value().description));
-    }
-    for(int i=0;i<ptwXML->columnCount()+1;i++)
-        ptwXML->verticalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-}
+    //====================================================//
+    // Функции подменю справочника физических лиц
 
 void PhoneBook::AddRecordIndividuals()
 {
-    QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(-1,db,modeldb,modelIndex);
+    QModelIndexList modelIndex;
+    formAddIndividuals = new FormIndividuals(-1,db,modeldb);
     formAddIndividuals->show();
 }
 
 void PhoneBook::EditRecordIndividuals()
 {
+    OpenIndividuals();
     QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(0,db,modeldb,modelIndex);
-    formAddIndividuals->show();
+    formindividualsEdit = new FormindividualsEdit(0,db,modeldb,modelIndex);
+    formindividualsEdit->show();
 }
 
 void PhoneBook::DeleteRecordIndividuals()
 {
+    OpenIndividuals();
     QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(1,db,modeldb,modelIndex);
-    formAddIndividuals->show();
+    formindividualsEdit = new FormindividualsEdit(1,db,modeldb,modelIndex);
+    formindividualsEdit->show();
 }
+
+
 
 void PhoneBook::SearchRecordNameIndividuals()
 {
     OpenIndividuals();
-    QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(2,db,modeldb,modelIndex);
+    QModelIndexList modelIndex;
+    formAddIndividuals = new FormIndividuals(2,db,modeldb);
     formAddIndividuals->show();
 }
 
 void PhoneBook::SearchRecordSurnameIndividuals()
 {
     OpenIndividuals();
-    QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(3,db,modeldb,modelIndex);
+    QModelIndexList modelIndex;
+    formAddIndividuals = new FormIndividuals(3,db,modeldb);
     formAddIndividuals->show();
 }
 
 void PhoneBook::SearchRecordNumberIndividuals()
 {
     OpenIndividuals();
-    QModelIndexList modelIndex= ptvSQL->selectionModel()->selectedRows();
-    formAddIndividuals = new FormIndividuals(4,db,modeldb,modelIndex);
+    QModelIndexList modelIndex;
+    formAddIndividuals = new FormIndividuals(4,db,modeldb);
     formAddIndividuals->show();
 }
+
 
 void PhoneBook::DisplayRecordListIndividuals()
 {
@@ -439,6 +366,11 @@ void PhoneBook::SearcheRecordMapIndividuals()
     formMapIndividuals = new FormMapIndividuals(db);
     formMapIndividuals->show();
 }
+    //====================================================//
+
+
+    //====================================================//
+    // Функции подменю справочника физических лиц
 
 void PhoneBook::AddRecordEntitie()
 {
@@ -460,6 +392,7 @@ void PhoneBook::DeleteRecordEntitie()
     formEntities = new FormEntities ();
     formEntities->show();
 }
+
 
 void PhoneBook::SearchRecordTitle()
 {
@@ -513,6 +446,8 @@ void PhoneBook::SearchRecordBranch()
 
 }
 
+
+
 void PhoneBook::DisplayRecordListEntitie()
 {
 
@@ -522,6 +457,11 @@ void PhoneBook::SearcheRecordMapEntitie()
 {
 
 }
+//====================================================//
+
+
+//====================================================//
+// Функции в pgbLower
 
 void PhoneBook::Exit()
 {
@@ -556,14 +496,12 @@ void PhoneBook::EditRecord()
         EditRecordIndividuals();
     else
         EditRecordEntitie();
-    //QModelIndex idIndex = ptvSQL->model()->selectedIndexes()->first();
-    //qDebug() << " value "<< ptvSQL->model()->data(ptvSQL->model()->index(index.row(),0)).toInt();
 
 }
 
 void PhoneBook::DeleteRecord()
 {
-    if(plDirIndividual->isVisible())
+    if(plDirIndividual->isVisible())      
         DeleteRecordIndividuals();
     else
         DeleteRecordEntitie();
@@ -587,8 +525,6 @@ void PhoneBook::SortNumber()
     modeldb->select();
 }
 
-
-
 void PhoneBook::Search()
 {
     if(prbname->isChecked())
@@ -602,8 +538,13 @@ void PhoneBook::Search()
 
 void PhoneBook::Show()
 {
-    modeldb->setTable("Records");
-    modeldb->select();
+    if(plDirIndividual->isVisible())
+    {
+        modeldb->setTable("Records");
+        modeldb->select();
+    }
+    else
+        Print_Table();
 }
 
 void PhoneBook::Map()
@@ -611,8 +552,13 @@ void PhoneBook::Map()
     if(plDirIndividual->isVisible())
         SearcheRecordMapIndividuals();
     else
-        AddRecordEntitie();
+        SearcheRecordMapEntitie();
 }
+//====================================================//
+
+
+//====================================================//
+// Функции смены отображения справочников
 
 void PhoneBook::OpenIndividuals()
 {
@@ -652,71 +598,93 @@ void PhoneBook::OpenLegalEntities()
     prbOGRN->show();
     prbbranch->show();
 
-
-//    QString OGRN="1221313";
-//    Company company;
-//    company.title="Название 1";
-//    company.director="Директор 1";
-//    company.phone_director="Телефон директора 1";
-//    company.contact_person="Контактный человек 1";
-//    company.phone_contact_person="Телефон контакного 1";
-//    company.adress="Адрес 1";
-//    company.branch="Отсрасль 1";
-//    company.description="Описание 1";
-
-//    QString OGRN1="1221314";
-//    Company company1;
-//    company1.title="Название 2";
-//    company1.director="Директор 2";
-//    company1.phone_director="Телефон директора 2";
-//    company1.contact_person="Контактный человек 2";
-//    company1.phone_contact_person="Телефон контакного 2";
-//    company1.adress="Адрес 2";
-//    company1.branch="Отсрасль 2";
-//    company1.description="Описание 2";
-
-//    QString OGRN3="1221315";
-//    Company company3;
-//    company3.title="Название 3";
-//    company3.director="Директор 3";
-//    company3.phone_director="Телефон директора 3";
-//    company3.contact_person="Контактный человек 3";
-//    company3.phone_contact_person="Телефон контакного 3";
-//    company3.adress="Адрес 3";
-//    company3.branch="Отсрасль 3";
-//    company3.description="Описание 3";
-
-//    mapCompany.insert(OGRN,company);
-//    //qDebug()<<mapCompany.size();
-//    mapCompany.insert(OGRN1,company1);//нужно создать модель
-//    //qDebug()<<mapCompany.size();
-//    mapCompany.insert(OGRN3,company3);//нужно создать модель
-//    //qDebug()<<mapCompany.size();
-
-//    QMapIterator<QString, Company> j(mapCompany);
-//    while (j.hasNext()) {
-//     j.next();
-//           qDebug()<<j.key();
-//           qDebug()<<j.value().title;
-//           qDebug()<<j.value().director;
-//           qDebug()<<j.value().phone_director;
-//           qDebug()<<j.value().contact_person;
-//           qDebug()<<j.value().phone_contact_person;
-//           qDebug()<<j.value().adress;
-//           qDebug()<<j.value().branch;
-//           qDebug()<<j.value().description;
-//        }
-
-    //QStandardItemModel* model = new QStandardItemModel();
-
-
     Print_Table();
-        // устанавливаем модели данных в таблицы
-        //ptwXML->setModel(model);
 }
-//QTableWidgetItem* MyTableWidgetFactory::createTableWidgetItem( const QString& text ) const
-//{
-//    QTableWidgetItem* item = new QTableWidgetItem( text );
-//    item->setTextAlignment( Qt::AlignLeft );
-//    return item;
-//}
+//====================================================//
+
+
+//====================================================//
+// Вспомогательные функции
+
+void PhoneBook::Close_msg(QString notification_text)
+{
+    QMessageBox msg;
+    msg.setText(notification_text);
+    msg.exec();
+}
+
+void PhoneBook::TraverseNode(const QDomNode& node)
+{
+    QString *OGRN= new QString();
+    Company *company= new Company();
+    QDomNode domNode = node.firstChild();
+    while ( ! domNode. isNull () ) {
+        if(domNode.isElement()) {
+            QDomElement domElement = domNode.toElement();
+            if (!domElement.isNull()) {
+                // НАД ИФАМИ ПОДУМАТЬ
+
+                if( domElement. tagName ( ) == "company" ) {
+                       OGRN = new QString();
+                       company = new Company();
+                }
+                else if(domElement.tagName() == "title")
+                    company->title=domElement.text();
+                else if(domElement.tagName() == "director")
+                    company->director=domElement.text();
+                else if(domElement.tagName() == "phone_director")
+                    company->phone_director=domElement.text();
+                else if(domElement.tagName() == "contact_person")
+                    company->contact_person=domElement.text();
+                else if(domElement.tagName() == "phone_contact_person")
+                    company->phone_contact_person=domElement.text();
+                else if(domElement.tagName() == "OGRN")
+                    *OGRN=domElement.text();
+                else if(domElement.tagName() == "adress")
+                    company->adress=domElement.text();
+                else if(domElement.tagName() == "branch")
+                    company->branch=domElement.text();
+                else if(domElement.tagName() == "description"){
+                    company->description=domElement.text();
+                    mapCompany.insert(*OGRN,*company);
+                }
+            }
+        }
+        TraverseNode(domNode);
+        domNode=domNode.nextSibling();
+    }
+}
+
+void PhoneBook::Print_Table()
+{
+    ptwXML->clearContents();
+    ptwXML->setRowCount(0);
+    QMapIterator<QString, Company> iterator_map (mapCompany);
+    while (iterator_map.hasNext())
+    {
+        iterator_map.next();
+        ptwXML->setRowCount(ptwXML->rowCount() + 1);
+
+        //QTableWidgetItem *newItem;
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 0, new QTableWidgetItem(iterator_map.value().title));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 1, new QTableWidgetItem(iterator_map.value().director));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 2, new QTableWidgetItem(iterator_map.value().phone_director));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 3, new QTableWidgetItem(iterator_map.value().contact_person));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 4, new QTableWidgetItem(iterator_map.value().phone_contact_person));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 5, new QTableWidgetItem(iterator_map.key()));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 6, new QTableWidgetItem(iterator_map.value().adress));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 7, new QTableWidgetItem(iterator_map.value().branch));
+
+        ptwXML->setItem(ptwXML->rowCount() - 1, 8, new QTableWidgetItem(iterator_map.value().description));
+    }
+    for(int i=0;i<ptwXML->columnCount()+1;i++)
+        ptwXML->verticalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+}

@@ -30,13 +30,15 @@ SOURCES += \
         phonebook.cpp \
     formindividuals.cpp \
     formmapindividuals.cpp \
-    formentities.cpp
+    formentities.cpp \
+    formindividualsedit.cpp
 
 HEADERS += \
         phonebook.h \
     formindividuals.h \
     formmapindividuals.h \
-    formentities.h
+    formentities.h \
+    formindividualsedit.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

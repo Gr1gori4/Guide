@@ -1,11 +1,9 @@
-#include "formindividuals.h"
+#include "formindividualsedit.h"
 #include "phonebook.h"
 
-FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb, QWidget *parent) :
+FormindividualsEdit::FormindividualsEdit(int i,QSqlDatabase db, QSqlTableModel *modeldb,QModelIndexList modelIndex, QWidget *parent) :
     QWidget(parent),
-
     phone_validator(QRegExp("^\\+7\\(\\d{3}\\)\\d{3}\\-\\d{2}\\-\\d{2}$")),
-//    text_validator(QRegExp("^[A-Z]{3-20}$")),
     text_validator(QRegExp("^[А-Я][а-я]{1,15}$")),
     mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,}\\.[a-zA-Z]{1,3}$"))
 
@@ -40,10 +38,8 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
     plenumber->setValidator(&phone_validator);
     pleadress->setValidator(&mail_validator);
 
-    ppbinsert = new QPushButton (tr("Добавить"));
     ppbedit = new QPushButton (tr("Редактировать"));
     ppbdelete = new QPushButton (tr("Удалить"));
-    ppbsearch = new QPushButton (tr("Поиск"));
 
     auto  *pvbxlform = new QVBoxLayout();
 
@@ -68,66 +64,33 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
 
 
     pvbxlform->addLayout(pgrdLayout);
-    pvbxlform->addWidget(ppbinsert);
     pvbxlform->addWidget(ppbedit);
     pvbxlform->addWidget(ppbdelete);
-    pvbxlform->addWidget(ppbsearch);
 
     setLayout(pvbxlform);
 
-    switch(i)
+    int row_count=modelIndex.begin()->row();
+    if(i)
     {
-    case -1:
         ppbedit->hide();
+        PrintInLineEdit(row_count,modeldb);
+    }
+    else {
         ppbdelete->hide();
-        ppbsearch->hide();
-        break;
-    case 1:
-        ppbinsert->hide();
-        ppbedit->hide();
-        ppbsearch->hide();
-        break;
-    case 0:
-        ppbinsert->hide();
-        ppbdelete->hide();
-        ppbsearch->hide();
-        break;
-    case 2:
-        plsurname->hide();
-        plesurname->hide();
-        plnumber->hide();
-        plenumber->hide();
-        Search_menu();
-        break;
-    case 3:
-        plname->hide();
-        plename->hide();
-        plnumber->hide();
-        plenumber->hide();
-        Search_menu();
-        break;
-    case 4:
-        plname->hide();
-        plename->hide();
-        plsurname->hide();
-        plesurname->hide();
-        Search_menu();
-        break;
+        PrintInLineEdit(row_count,modeldb);
     }
 
-    connect(ppbinsert,&QPushButton::clicked, [=](){ this->AddRecord(db,modeldb); });
     connect(ppbedit,&QPushButton::clicked, [=](){ this->EditRecord(db,modeldb); });
     connect(ppbdelete, &QPushButton::clicked, [=](){ this->DeleteRecord(db,modeldb); });
-    connect(ppbsearch, &QPushButton::clicked, [=](){ this->SearchRecord(modeldb); });
 
 }
 
-FormIndividuals::~FormIndividuals()
+FormindividualsEdit::~FormindividualsEdit()
 {
 
 }
 
-void FormIndividuals::Close_msg(QString str)
+void FormindividualsEdit::Close_msg(QString str)
 {
     QMessageBox msg;
     msg.setText(str);
@@ -135,53 +98,18 @@ void FormIndividuals::Close_msg(QString str)
         QWidget::close();
 }
 
-void FormIndividuals::Search_menu()
+void FormindividualsEdit::PrintInLineEdit(int row_count,QSqlTableModel *modeldb)
 {
-    ppbinsert->hide();
-    ppbedit->hide();
-    ppbdelete->hide();
-    pladress->hide();
-    pleadress->hide();
-    plstatus->hide();
-    plestatus->hide();
-    pldescription->hide();
-    pledescription->hide();
-    plpatronymic->hide();
-    plepatronymic->hide();
+    plesurname->setText((new QVariant(modeldb->data(modeldb->index(row_count,0))))->toString());
+    plename->setText((new QVariant(modeldb->data(modeldb->index(row_count,1))))->toString());
+    plepatronymic->setText((new QVariant(modeldb->data(modeldb->index(row_count,2))))->toString());
+    plenumber->setText((new QVariant(modeldb->data(modeldb->index(row_count,3))))->toString());
+    pleadress->setText((new QVariant(modeldb->data(modeldb->index(row_count,4))))->toString());
+    plestatus->setText((new QVariant(modeldb->data(modeldb->index(row_count,5))))->toString());
+    pledescription->setText((new QVariant(modeldb->data(modeldb->index(row_count,6))))->toString());
 }
 
-
-
-void FormIndividuals::AddRecord(QSqlDatabase db, QSqlTableModel *modeldb)
-{
-    QSqlQuery query(db);
-
-    query.prepare("INSERT INTO Records ('Фамилия', 'Имя', 'Отчество', 'Телефон', 'Почта', 'Статус', 'Описание') "
-                  "VALUES (:surname, :name, :patronymic, :number,:adress,:status, :description)");
-
-    if(!plesurname->text().isEmpty() && !plename->text().isEmpty() && !plenumber->text().isEmpty())
-    {
-        query.bindValue( ":surname",plesurname->text());
-        query.bindValue( ":name",plename->text());
-        query.bindValue( ":patronymic",plepatronymic->text());
-        query.bindValue( ":number",plenumber->text());
-        query.bindValue( ":adress",pleadress->text());
-        query.bindValue( ":status",plestatus->text());
-        query.bindValue( ":description",pledescription->text());
-
-        if(query.exec())
-        {
-            modeldb->select();
-            Close_msg("Запись успешно добавлена");
-        }
-        else
-           Close_msg("При записи произошла ошибка\n"+db.lastError().text());
-    }
-    else
-        Close_msg("Поля для ввода фамилии, имени и номера обязательны");
-
-}
-void FormIndividuals::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
+void FormindividualsEdit::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
 {
     QSqlQuery query(db);
 
@@ -206,7 +134,7 @@ void FormIndividuals::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
     }
 }
 
-void FormIndividuals::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
+void FormindividualsEdit::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
 {
     QSqlQuery query(db);
     int prev=query.numRowsAffected();
@@ -224,19 +152,4 @@ void FormIndividuals::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
         Close_msg("Неуспешная попытка удаления записи\n");
 
 }
-void FormIndividuals::SearchRecord(QSqlTableModel *modeldb)
-{
-    if(!plename->text().isEmpty())
-        modeldb->setFilter("Имя = '"+plename->text()+"'");
-
-    else if(!plesurname->text().isEmpty())
-        modeldb->setFilter("Фамилия = '"+plesurname->text()+"'");
-
-    else if(!plenumber->text().isEmpty())
-        modeldb->setFilter("Телефон = '"+plenumber->text()+"'");
-
-    modeldb->select();
-    Close_msg("Поиск завершен");
-}
-
 
