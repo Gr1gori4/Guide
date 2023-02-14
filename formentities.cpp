@@ -53,9 +53,9 @@ FormEntities::FormEntities(QWidget *parent) :
     ppbdelete = new QPushButton (tr("Удалить"));
     ppbsearch = new QPushButton (tr("Поиск"));
 
-    QVBoxLayout  *pvbxlform = new QVBoxLayout();
+    auto *pvbxlform = new QVBoxLayout();
 
-    QGridLayout* pgrdLayout = new QGridLayout;
+    auto *pgrdLayout = new QGridLayout;
     pgrdLayout->setContentsMargins(5, 5, 5, 5);
     pgrdLayout->setSpacing(15);
 

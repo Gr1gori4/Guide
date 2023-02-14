@@ -11,6 +11,7 @@
 #include <QSqlTableModel>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QDebug>
 #include <QXmlStreamReader>
 #include <QValidator>
@@ -24,7 +25,7 @@ class FormIndividuals : public QWidget
     Q_OBJECT
 
 public:
-    explicit FormIndividuals(int, QSqlDatabase, QSqlTableModel *,QWidget *parent = nullptr);
+    explicit FormIndividuals(int, QSqlDatabase, QSqlTableModel *,QModelIndexList, QWidget *parent = nullptr);
     ~FormIndividuals();
 
 private:
@@ -61,7 +62,7 @@ private slots:
     void AddRecord(QSqlDatabase,QSqlTableModel *);
     void EditRecord(QSqlDatabase,QSqlTableModel *);
     void DeleteRecord(QSqlDatabase,QSqlTableModel *);
-    void SearchRecord(QSqlDatabase,QSqlTableModel *);
+    void SearchRecord(QSqlTableModel *);
 
 };
 

@@ -19,6 +19,7 @@
 #include <QSqlError>
 #include <QSqlTableModel>
 #include <QSqlQuery>
+#include <QSqlRelationalDelegate>
 #include <QTableView>
 #include <QtXml>
 #include <QMap>
@@ -56,9 +57,9 @@ private:
     QLabel *plDirEntitie;
     QPushButton *ppbIndividuals;
     QPushButton *ppbLegalEntities;
-    QTableView *ptable;
-    QTableWidget   *ptable1;
-    QLineEdit* plename;
+    QTableView *ptvSQL;
+    QTableWidget   *ptwXML;
+    QLineEdit* pleSearch;
     QRadioButton *prbname;
     QRadioButton *prbsurname;
     QRadioButton *prbnumber;
@@ -73,6 +74,8 @@ private:
     void CreateMenu(/*QWidget *parent*/);
     void Close_msg(QString);
     void TraverseNode(const QDomNode&);
+    void Print_Table();
+    //QTableWidgetItem* MyTableWidgetFactory::createTableWidgetItem( const QString& text ) const;
 
     FormIndividuals *formAddIndividuals;
     FormMapIndividuals *formMapIndividuals;

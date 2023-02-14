@@ -24,6 +24,9 @@ private:
     QTableView *ptable;
     QSqlTableModel *modeldb;
 
+private slots:
+    void Forward(QSqlQuery *);
+    void Back(QSqlQuery *);
 };
 
 #endif // FORMMAPINDIVIDUALS_H
