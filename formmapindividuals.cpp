@@ -1,22 +1,24 @@
 #include "formmapindividuals.h"
 #include "phonebook.h"
 
-FormMapIndividuals::FormMapIndividuals(QSqlDatabase db,QWidget *parent) :
+FormMapIndividuals::FormMapIndividuals(QSqlDatabase database,QWidget *parent) :
     QWidget(parent)
 {
-    //resize(780, 300);
-    ptable = new QTableView();
-    ptable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ptable->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    resize(1250, 300);
+    setWindowTitle("Физические лица");
+    ptvSQL = new QTableView();
+    ptvSQL->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ptvSQL->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    ptvSQL->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
-    modeldb= new QSqlTableModel(this,db);
-    modeldb->setTable("Records");
+    modeldatabase= new QSqlTableModel(this,database);
+    modeldatabase->setTable("Records");
 
-    ptable->setModel(modeldb);
+    ptvSQL->setModel(modeldatabase);
 
     auto* phbxlTop = new QVBoxLayout();
-    phbxlTop->addWidget(ptable);
+    phbxlTop->addWidget(ptvSQL);
 
     auto *ppbforward = new QPushButton (tr("Вперед"));
     auto *ppbback = new QPushButton (tr("Назад"));
@@ -31,39 +33,18 @@ FormMapIndividuals::FormMapIndividuals(QSqlDatabase db,QWidget *parent) :
 
     setLayout(phbxlTop);
 
-    QSqlQuery *query=new QSqlQuery(db);
+    QSqlQuery *query=new QSqlQuery(database);
 
-    //========================================================// Число различных записей
-//    query.prepare("SELECT COUNT(DISTINCT Статус) as count FROM Records");
-
-//    query.exec();
-//    query.next();
-//    int count_status = query.value(0).toInt();
-//    qDebug()<<count_status;
-    //========================================================// Получение статусов
-
-//     query->prepare("SELECT DISTINCT Статус  FROM Records");
-//     if(query->exec())
-//         while( query->next())
-//            qDebug()<<query->value(0).toString();
-    //===============================================================//
     query->prepare("SELECT DISTINCT Статус  FROM Records");
     query->exec();
 
     query->first();
     query->next();
-    modeldb->setFilter("Статус = '"+query->value(0).toString()+"'");
-    modeldb->select();
-//    query.next();
-//    QString str = query.value(5).toString();
-//     //=====================================================/
-//     modeldb->setFilter("Статус = '"+str+"'");
-//     modeldb->select();
+    modeldatabase->setFilter("Статус = '"+query->value(0).toString()+"'");
+    modeldatabase->select();
 
     connect(ppbforward,&QPushButton::clicked, [=](){ this->Forward(query); });
     connect(ppbback,&QPushButton::clicked, [=](){ this->Back(query); });
-//    connect(ppbforward,SIGNAL(clicked()),SLOT(Forward(query)));
-//    connect(ppbback,SIGNAL(clicked()),SLOT(Back(query)));
 }
 
 FormMapIndividuals::~FormMapIndividuals()
@@ -74,17 +55,15 @@ FormMapIndividuals::~FormMapIndividuals()
 void FormMapIndividuals::Forward(QSqlQuery *query)
 {
     if(query->next()) {
-        modeldb->select();
-        modeldb->setFilter("Статус = '"+query->value(0).toString()+"'");
+        modeldatabase->select();
+        modeldatabase->setFilter("Статус = '"+query->value(0).toString()+"'");
     }
-
-
 }
 
 void FormMapIndividuals::Back(QSqlQuery *query)
 {
     if(query->previous()){
-        modeldb->select();
-        modeldb->setFilter("Статус = '"+query->value(0).toString()+"'");
+        modeldatabase->select();
+        modeldatabase->setFilter("Статус = '"+query->value(0).toString()+"'");
     }
 }

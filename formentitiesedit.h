@@ -1,7 +1,7 @@
-#ifndef FORMENTITIES_H
-#define FORMENTITIES_H
-# define emit
+#ifndef FORMENTITIESEDIT_H
+#define FORMENTITIESEDIT_H
 
+#include <QWidget>
 #include <QWidget>
 #include <QLineEdit>
 #include <QLabel>
@@ -9,17 +9,17 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QDebug>
+#include <QXmlStreamReader>
 #include <QValidator>
+#include <QString>
 
-class FormEntities : public QWidget
+class FormEntitiesEdit : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FormEntities(QWidget *parent = nullptr);
-    ~FormEntities();
-    QString OGRN;
-    QList<QString> company;
+    explicit FormEntitiesEdit(QString,QString , QString ,QString ,QString ,QString ,QString ,QString , QString,QWidget *parent = nullptr);
+    ~FormEntitiesEdit();
 
 private:
     QLineEdit *pletitle;
@@ -42,7 +42,7 @@ private:
     QLabel *plbranch;
     QLabel *pldescription;
 
-    QPushButton *ppbinsert;
+    QPushButton *ppbedit;
 
     QRegExpValidator phone_validator;
     QRegExpValidator text_validator;
@@ -50,10 +50,9 @@ private:
     QRegExpValidator mail_validator;
 
 private slots:
-    void AddRecord();
+    void EditRecord();
 signals:
-    void signalForm( QString,QString , QString ,QString ,QString ,QString ,QString ,QString , QString);
-
+    void signalForm( QString,QString , QString ,QString ,QString ,QString ,QString ,QString , QString );
 };
 
-#endif // FORMENTITIES_H
+#endif // FORMENTITIESEDIT_H

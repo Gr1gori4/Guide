@@ -1,13 +1,16 @@
 #include "formindividualsedit.h"
 #include "phonebook.h"
 
-FormindividualsEdit::FormindividualsEdit(int i,QSqlDatabase db, QSqlTableModel *modeldb,QModelIndexList modelIndex, QWidget *parent) :
+FormindividualsEdit::FormindividualsEdit(int work_variant,QSqlDatabase database, QSqlTableModel *modeldatabase,QModelIndexList modelIndex,
+                                         QWidget *parent) :
     QWidget(parent),
-    phone_validator(QRegExp("^\\+7\\(\\d{3}\\)\\d{3}\\-\\d{2}\\-\\d{2}$")),
+    phone_validator(QRegExp("^\\+7\\d{10}$")),
     text_validator(QRegExp("^[А-Я][а-я]{1,15}$")),
     mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,}\\.[a-zA-Z]{1,3}$"))
 
 {
+    setWindowTitle("Редактирование");
+
     plsurname = new QLabel(tr("Фамилия:"));
     plname = new QLabel (tr("Имя:"));
     plpatronymic = new QLabel (tr("Отчество:"));
@@ -24,13 +27,13 @@ FormindividualsEdit::FormindividualsEdit(int i,QSqlDatabase db, QSqlTableModel *
     plestatus = new QLineEdit ();
     pledescription = new QLineEdit ();
 
-    plesurname->setPlaceholderText(tr("Введите фамилию"));
-    plename->setPlaceholderText(tr("Введите имя"));
-    plepatronymic->setPlaceholderText(tr("Введите отчество"));
-    plenumber->setPlaceholderText(tr("+7(___)___-__-__"));
-    pleadress->setPlaceholderText(tr("Введите адрес почты"));
-    plestatus->setPlaceholderText(tr("Введите статус"));
-    pledescription->setPlaceholderText(tr("Введите описание"));
+    plesurname->setPlaceholderText(tr("Иванов"));
+    plename->setPlaceholderText(tr("Иван"));
+    plepatronymic->setPlaceholderText(tr("Иванович"));
+    plenumber->setPlaceholderText(tr("+7__________"));
+    pleadress->setPlaceholderText(tr("ivanov@yandex.ru"));
+    plestatus->setPlaceholderText(tr("Коллега"));
+    pledescription->setPlaceholderText(tr("Описание"));
 
     plesurname->setValidator(&text_validator);
     plename->setValidator(&text_validator);
@@ -69,19 +72,25 @@ FormindividualsEdit::FormindividualsEdit(int i,QSqlDatabase db, QSqlTableModel *
 
     setLayout(pvbxlform);
 
-    int row_count=modelIndex.begin()->row();
-    if(i)
+    if(work_variant)
     {
         ppbedit->hide();
-        PrintInLineEdit(row_count,modeldb);
+        plesurname->setEnabled(false);
+        plename->setEnabled(false);
+        plepatronymic->setEnabled(false);
+        plenumber->setEnabled(false);
+        pleadress->setEnabled(false);
+        plestatus->setEnabled(false);
+        pledescription->setEnabled(false);
+        PrintInLineEdit(modelIndex.begin()->row(),modeldatabase);
     }
     else {
         ppbdelete->hide();
-        PrintInLineEdit(row_count,modeldb);
+        PrintInLineEdit(modelIndex.begin()->row(),modeldatabase);
     }
 
-    connect(ppbedit,&QPushButton::clicked, [=](){ this->EditRecord(db,modeldb); });
-    connect(ppbdelete, &QPushButton::clicked, [=](){ this->DeleteRecord(db,modeldb); });
+    connect(ppbedit,&QPushButton::clicked, [=](){ this->EditRecord(database,modeldatabase); });
+    connect(ppbdelete, &QPushButton::clicked, [=](){ this->DeleteRecord(database,modeldatabase); });
 
 }
 
@@ -109,24 +118,32 @@ void FormindividualsEdit::PrintInLineEdit(int row_count,QSqlTableModel *modeldb)
     pledescription->setText((new QVariant(modeldb->data(modeldb->index(row_count,6))))->toString());
 }
 
-void FormindividualsEdit::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
+void FormindividualsEdit::EditRecord(QSqlDatabase database, QSqlTableModel *modeldatabase)
 {
-    QSqlQuery query(db);
+    QSqlQuery query(database);
 
-    query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", 'Отчество' = \""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""+pleadress->text()+"\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+"\"  WHERE Имя =\""+plename->text()+"\"AND Фамилия =\""+plesurname->text()+"\"" );
+    query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", "
+                  "'Отчество' = \""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""
+                   ""+pleadress->text()+"\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+
+                  "\"  WHERE Имя =\""+plename->text()+"\"AND Фамилия =\""+plesurname->text()+"\"" );
+
     query.exec();
 
     if(query.first()!=0)
     {
-        modeldb->select();
+        modeldatabase->select();
         Close_msg("Данные записи обновлены");
     }
     else
 
     {
-        query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", 'Отчество' = \""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""+pleadress->text()+"\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+"\"  WHERE Телефон =\""+plenumber->text()+"\"" );
+        query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", 'Отчество' = \""
+                      ""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""+pleadress->text()+
+                      "\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+"\"  WHERE Телефон =\""
+                      +plenumber->text()+"\"" );
+
         query.exec();
-        modeldb->select();
+        modeldatabase->select();
         if(!query.first())
             Close_msg("Данные записи обновлены");
         else
@@ -134,9 +151,9 @@ void FormindividualsEdit::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
     }
 }
 
-void FormindividualsEdit::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
+void FormindividualsEdit::DeleteRecord(QSqlDatabase database, QSqlTableModel *modeldatabase)
 {
-    QSqlQuery query(db);
+    QSqlQuery query(database);
     int prev=query.numRowsAffected();
 
     query.prepare("DELETE FROM Records WHERE Телефон = ? ");
@@ -145,11 +162,10 @@ void FormindividualsEdit::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
 
     if(prev!=query.numRowsAffected())
     {
-        modeldb->select();
+        modeldatabase->select();
         Close_msg("Запись удалена");
     }
     else
         Close_msg("Неуспешная попытка удаления записи\n");
-
 }
 

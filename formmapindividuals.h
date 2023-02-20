@@ -8,9 +8,6 @@
 #include <QSqlQuery>
 #include <QTableView>
 
-namespace Ui {
-class FormMapIndividuals;
-}
 
 class FormMapIndividuals : public QWidget
 {
@@ -21,8 +18,8 @@ public:
     ~FormMapIndividuals();
 
 private:
-    QTableView *ptable;
-    QSqlTableModel *modeldb;
+    QTableView *ptvSQL;
+    QSqlTableModel *modeldatabase;
 
 private slots:
     void Forward(QSqlQuery *);

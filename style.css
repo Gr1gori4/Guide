@@ -54,6 +54,17 @@ QPushButton:pressed {
 QLabel {
     color: #364e54;
 }
+QMenu {
+    color: #364e54;
+}
+QMenuBar {
+    color: #364e54;
+}
+QLabel#plState{
+    font-size: 30px;
+    background-color: yellow;
+}
+
 
 QLineEdit {
     border: 1px solid "#cdd2d5";

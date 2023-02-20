@@ -13,7 +13,6 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QDebug>
-#include <QXmlStreamReader>
 #include <QValidator>
 
 

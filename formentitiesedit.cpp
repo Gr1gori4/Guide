@@ -1,15 +1,17 @@
-#include "formentities.h"
+#include "formentitiesedit.h"
 #include "phonebook.h"
 
 
-FormEntities::FormEntities(QWidget *parent) :
+FormEntitiesEdit::FormEntitiesEdit(QString title,QString director, QString phone_director,QString contact_person,
+                                   QString phone_contact_person,QString OGRN,QString adress,QString branch,
+                                   QString description,QWidget *parent) :
     QWidget(parent),
     phone_validator(QRegExp("^\\+7\\d{10}$")),
-    text_validator(QRegExp("^[А-Яа-я]{1,}$")),
+    text_validator(QRegExp("^[А-Я][а-я]{1,}$")),
     fio_validator(QRegExp("^[А-Я][а-я]{1,}\\s[А-Я][а-я]{1,}\\s[А-Я][а-я]{1,}$")),
     mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,}\\.[a-zA-Z]{1,3}$"))
 {
-    setWindowTitle("Добавление");
+    setWindowTitle("Редактирование");
 
     pletitle = new QLineEdit ();
     pledirector = new QLineEdit ();
@@ -31,15 +33,15 @@ FormEntities::FormEntities(QWidget *parent) :
     plbranch = new QLabel(tr("Отрасль:"));
     pldescription = new QLabel(tr("Описание:"));
 
-    pletitle->setPlaceholderText(tr("Название компании"));
-    pledirector->setPlaceholderText(tr("Фамилия Имя Отчество"));
-    plephone_director->setPlaceholderText(tr("+7__________"));
-    plecontact_person->setPlaceholderText(tr("Фамилия Имя Отчество"));
-    plephone_contact_person->setPlaceholderText(tr("+7__________"));
-    pleOGRN->setPlaceholderText(tr("_____________"));
-    pleadress->setPlaceholderText(tr("г.__,ул.___, д.__"));
-    plebranch->setPlaceholderText(tr("Отрасль"));
-    pledescription->setPlaceholderText(tr("Описание"));
+    pletitle->setText(title);
+    pledirector->setText(director);
+    plephone_director->setText(phone_director);
+    plecontact_person->setText(contact_person);
+    plephone_contact_person->setText(phone_contact_person);
+    pleOGRN->setText(OGRN);
+    pleadress->setText(adress);
+    plebranch->setText(branch);
+    pledescription->setText(description);
 
     pletitle->setValidator(&text_validator);
     plebranch->setValidator(&text_validator);
@@ -49,7 +51,7 @@ FormEntities::FormEntities(QWidget *parent) :
     plephone_contact_person->setValidator(&phone_validator);
     pleadress->setValidator(&mail_validator);
 
-    ppbinsert = new QPushButton (tr("Добавить"));
+    ppbedit = new QPushButton (tr("Редактировать"));
 
     auto *pvbxlform = new QVBoxLayout();
 
@@ -76,23 +78,22 @@ FormEntities::FormEntities(QWidget *parent) :
     pgrdLayout->addWidget(pldescription, 8, 0);
     pgrdLayout->addWidget(pledescription, 8, 1) ;
 
+
     pvbxlform->addLayout(pgrdLayout);
-    pvbxlform->addWidget(ppbinsert);
+    pvbxlform->addWidget(ppbedit);
 
     setLayout(pvbxlform);
 
-    connect(ppbinsert,SIGNAL(clicked()),SLOT(AddRecord()));
+    connect(ppbedit,SIGNAL(clicked()),SLOT(EditRecord()));
 }
 
-FormEntities::~FormEntities()
+FormEntitiesEdit::~FormEntitiesEdit()
 {
 
 }
 
-void FormEntities::AddRecord()
+void FormEntitiesEdit::EditRecord()
 {
     emit signalForm(pletitle->text(), pledirector->text(),plephone_director->text(),plecontact_person->text(),plephone_contact_person->text(),pleOGRN->text(),pleadress->text(),plebranch->text(),pledescription->text());
     close();
 }
-
-

@@ -1,15 +1,15 @@
 #include "formindividuals.h"
 #include "phonebook.h"
 
-FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb, QWidget *parent) :
+FormIndividuals::FormIndividuals(int work_variant,QSqlDatabase db, QSqlTableModel *modeldb, QWidget *parent) :
     QWidget(parent),
 
-    phone_validator(QRegExp("^\\+7\\(\\d{3}\\)\\d{3}\\-\\d{2}\\-\\d{2}$")),
-//    text_validator(QRegExp("^[A-Z]{3-20}$")),
+    phone_validator(QRegExp("^\\+7\\d{10}$")),
     text_validator(QRegExp("^[А-Я][а-я]{1,15}$")),
-    mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,}\\.[a-zA-Z]{1,3}$"))
-
+    mail_validator(QRegExp("^\\w+@[a-zA-Z]{1,6}\\.[a-zA-Z]{1,3}$"))
 {
+    setWindowTitle("Добавление/поиск");
+
     plsurname = new QLabel(tr("Фамилия:"));
     plname = new QLabel (tr("Имя:"));
     plpatronymic = new QLabel (tr("Отчество:"));
@@ -26,13 +26,13 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
     plestatus = new QLineEdit ();
     pledescription = new QLineEdit ();
 
-    plesurname->setPlaceholderText(tr("Введите фамилию"));
-    plename->setPlaceholderText(tr("Введите имя"));
-    plepatronymic->setPlaceholderText(tr("Введите отчество"));
-    plenumber->setPlaceholderText(tr("+7(___)___-__-__"));
-    pleadress->setPlaceholderText(tr("Введите адрес почты"));
-    plestatus->setPlaceholderText(tr("Введите статус"));
-    pledescription->setPlaceholderText(tr("Введите описание"));
+    plesurname->setPlaceholderText(tr("Иванов"));
+    plename->setPlaceholderText(tr("Иван"));
+    plepatronymic->setPlaceholderText(tr("Иванович"));
+    plenumber->setPlaceholderText(tr("+7__________"));
+    pleadress->setPlaceholderText(tr("ivanov@yandex.ru"));
+    plestatus->setPlaceholderText(tr("Коллега"));
+    pledescription->setPlaceholderText(tr("Описание"));
 
     plesurname->setValidator(&text_validator);
     plename->setValidator(&text_validator);
@@ -41,8 +41,6 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
     pleadress->setValidator(&mail_validator);
 
     ppbinsert = new QPushButton (tr("Добавить"));
-    ppbedit = new QPushButton (tr("Редактировать"));
-    ppbdelete = new QPushButton (tr("Удалить"));
     ppbsearch = new QPushButton (tr("Поиск"));
 
     auto  *pvbxlform = new QVBoxLayout();
@@ -69,44 +67,30 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
 
     pvbxlform->addLayout(pgrdLayout);
     pvbxlform->addWidget(ppbinsert);
-    pvbxlform->addWidget(ppbedit);
-    pvbxlform->addWidget(ppbdelete);
     pvbxlform->addWidget(ppbsearch);
 
     setLayout(pvbxlform);
 
-    switch(i)
+    switch(work_variant)
     {
-    case -1:
-        ppbedit->hide();
-        ppbdelete->hide();
+    case 0:
         ppbsearch->hide();
         break;
     case 1:
-        ppbinsert->hide();
-        ppbedit->hide();
-        ppbsearch->hide();
-        break;
-    case 0:
-        ppbinsert->hide();
-        ppbdelete->hide();
-        ppbsearch->hide();
-        break;
-    case 2:
         plsurname->hide();
         plesurname->hide();
         plnumber->hide();
         plenumber->hide();
         Search_menu();
         break;
-    case 3:
+    case 2:
         plname->hide();
         plename->hide();
         plnumber->hide();
         plenumber->hide();
         Search_menu();
         break;
-    case 4:
+    case 3:
         plname->hide();
         plename->hide();
         plsurname->hide();
@@ -116,8 +100,6 @@ FormIndividuals::FormIndividuals(int i,QSqlDatabase db, QSqlTableModel *modeldb,
     }
 
     connect(ppbinsert,&QPushButton::clicked, [=](){ this->AddRecord(db,modeldb); });
-    connect(ppbedit,&QPushButton::clicked, [=](){ this->EditRecord(db,modeldb); });
-    connect(ppbdelete, &QPushButton::clicked, [=](){ this->DeleteRecord(db,modeldb); });
     connect(ppbsearch, &QPushButton::clicked, [=](){ this->SearchRecord(modeldb); });
 
 }
@@ -138,8 +120,6 @@ void FormIndividuals::Close_msg(QString str)
 void FormIndividuals::Search_menu()
 {
     ppbinsert->hide();
-    ppbedit->hide();
-    ppbdelete->hide();
     pladress->hide();
     pleadress->hide();
     plstatus->hide();
@@ -181,49 +161,7 @@ void FormIndividuals::AddRecord(QSqlDatabase db, QSqlTableModel *modeldb)
         Close_msg("Поля для ввода фамилии, имени и номера обязательны");
 
 }
-void FormIndividuals::EditRecord(QSqlDatabase db, QSqlTableModel *modeldb)
-{
-    QSqlQuery query(db);
 
-    query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", 'Отчество' = \""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""+pleadress->text()+"\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+"\"  WHERE Имя =\""+plename->text()+"\"AND Фамилия =\""+plesurname->text()+"\"" );
-    query.exec();
-
-    if(query.first()!=0)
-    {
-        modeldb->select();
-        Close_msg("Данные записи обновлены");
-    }
-    else
-
-    {
-        query.prepare("UPDATE Records SET 'Фамилия' = \""+plesurname->text()+"\", 'Имя' = \""+plename->text()+"\", 'Отчество' = \""+plepatronymic->text()+"\",  'Телефон' = \""+plenumber->text()+"\", 'Почта' = \""+pleadress->text()+"\", 'Статус' = \""+plestatus->text()+"\", 'Описание' = \""+pledescription->text()+"\"  WHERE Телефон =\""+plenumber->text()+"\"" );
-        query.exec();
-        modeldb->select();
-        if(!query.first())
-            Close_msg("Данные записи обновлены");
-        else
-            Close_msg("Данные записи необновлены");
-    }
-}
-
-void FormIndividuals::DeleteRecord(QSqlDatabase db, QSqlTableModel *modeldb)
-{
-    QSqlQuery query(db);
-    int prev=query.numRowsAffected();
-
-    query.prepare("DELETE FROM Records WHERE Телефон = ? ");
-    query.addBindValue(plenumber->text());
-    query.exec();
-
-    if(prev!=query.numRowsAffected())
-    {
-        modeldb->select();
-        Close_msg("Запись удалена");
-    }
-    else
-        Close_msg("Неуспешная попытка удаления записи\n");
-
-}
 void FormIndividuals::SearchRecord(QSqlTableModel *modeldb)
 {
     if(!plename->text().isEmpty())

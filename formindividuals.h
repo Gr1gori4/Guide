@@ -13,12 +13,8 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QDebug>
-#include <QXmlStreamReader>
 #include <QValidator>
 
-namespace Ui {
-class FormIndividuals;
-}
 
 class FormIndividuals : public QWidget
 {
@@ -46,8 +42,6 @@ private:
     QLabel* pldescription;
 
     QPushButton *ppbinsert;
-    QPushButton *ppbedit;
-    QPushButton *ppbdelete;
     QPushButton *ppbsearch;
 
     QRegExpValidator phone_validator;
@@ -61,8 +55,6 @@ private:
 
 private slots:
     void AddRecord(QSqlDatabase,QSqlTableModel *);
-    void EditRecord(QSqlDatabase,QSqlTableModel *);
-    void DeleteRecord(QSqlDatabase,QSqlTableModel *);
     void SearchRecord(QSqlTableModel *);
 
 };

@@ -26,15 +26,20 @@
 #include <QStandardItemModel>
 #include <QModelIndex>
 #include <QHeaderView>
+#include <QHash>
 #include "formindividuals.h"
 #include "formindividualsedit.h"
 #include "formmapindividuals.h"
-#include "formEntities.h"
+#include "formentities.h"
+#include "formentitiesedit.h"
 
 class PhoneBook : public QWidget
 {
     Q_OBJECT
 
+public:
+    PhoneBook(QWidget *parent = 0);
+    ~PhoneBook();
     struct Company
         {
             QString title;
@@ -46,11 +51,6 @@ class PhoneBook : public QWidget
             QString branch;
             QString description;
         };
-
-
-public:
-    PhoneBook(QWidget *parent = 0);
-    ~PhoneBook();
 private:
     QGroupBox *pgbLower;
     QLabel *plDirIndividual;
@@ -58,6 +58,9 @@ private:
     QLabel *plDirEntitie;
     QPushButton *ppbIndividuals;
     QPushButton *ppbLegalEntities;
+    QPushButton *ppbforward;
+    QPushButton *ppbback;
+    QPushButton  *ppbmap;
     QTableView *ptvSQL;
     QTableWidget   *ptwXML;
     QLineEdit* pleSearch;
@@ -69,34 +72,33 @@ private:
     QRadioButton *prbOGRN;
     QRadioButton *prbbranch;
 
-    QSqlDatabase db;
-    QSqlTableModel *modeldb;
+    QSqlDatabase database;
+    QSqlTableModel *modeldatabase;
 
-    void CreateMenu(/*QWidget *parent*/);
-    void Close_msg(QString);
+    void CreateMenu();
+    void Message(QString);
     void TraverseNode(const QDomNode&);
     void Print_Table();
-    //QTableWidgetItem* MyTableWidgetFactory::createTableWidgetItem( const QString& text ) const;
+    void SearchIndividuals();
+    void SearchEntities();
+    void PrintRecordMap(QMapIterator<QString, Company>);
+    void EditRecordEntitie();
+    void DeleteRecordEntitie();
+    void WriteFailXML();
+
+
 
     FormIndividuals *formAddIndividuals;
     FormMapIndividuals *formMapIndividuals;
     FormindividualsEdit *formindividualsEdit;
-
     FormEntities *formEntities;
+    FormEntitiesEdit *formEntitiesEdit;
 
-//    struct Company
-//        {
-//            QString title;
-//            QString director;
-//            QString phone_director;
-//            QString contact_person;
-//            QString phone_contact_person;
-//            QString adress;
-//            QString branch;
-//            QString description;
-//        };
+    QList<QString>::const_iterator it;
 
     QMap<QString, Company> mapCompany;
+
+    int numberRowSelectedPtwXML=-1;
 
 
 private slots:
@@ -107,17 +109,13 @@ private slots:
     void SearchRecordSurnameIndividuals();
     void SearchRecordNumberIndividuals();
     void DisplayRecordListIndividuals();
-    void SearcheRecordMapIndividuals();
 
     void AddRecordEntitie();
-    void EditRecordEntitie();
-    void DeleteRecordEntitie();
     void SearchRecordTitle();
     void SearchRecordDirector();
     void SearchRecordOGRN();
     void SearchRecordBranch();
     void DisplayRecordListEntitie();
-    void SearcheRecordMapEntitie();
 
     void Exit();
     void GoMain();
@@ -133,6 +131,12 @@ private slots:
     void Map();
     void OpenIndividuals();
     void OpenLegalEntities();
+
+    void CellClickedTable(int row,int column);
+
+public slots:
+    void dataForm(QString ,QString , QString ,QString ,QString ,QString ,QString ,QString , QString );
+
 };
 
 #endif // PHONEBOOK_H
